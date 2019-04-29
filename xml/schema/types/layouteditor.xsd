@@ -65,8 +65,8 @@
 
       <xs:attribute name="class" type="classType" use="required" />
       <xs:attribute name="name" type="xs:string"/>
-      <xs:attribute name="x" type="xs:integer" use="required" />
-      <xs:attribute name="y" type="xs:integer" use="required" />
+      <xs:attribute name="x" type="xs:integer" />
+      <xs:attribute name="y" type="xs:integer" />
       <xs:attribute name="windowheight" type="xs:integer"/>
       <xs:attribute name="windowwidth" type="xs:integer"/>
       <xs:attribute name="panelheight" type="xs:integer" use="required" />

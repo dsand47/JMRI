@@ -54,8 +54,8 @@ public class LayoutEditorXml extends AbstractXmlAdapter {
 
         panel.setAttribute("class", getClass().getName());
         panel.setAttribute("name", p.getLayoutName());
-        panel.setAttribute("x", "" + p.getUpperLeftX());
-        panel.setAttribute("y", "" + p.getUpperLeftY());
+        //panel.setAttribute("x", "" + p.getUpperLeftX());
+        //panel.setAttribute("y", "" + p.getUpperLeftY());
         // From this version onwards separate sizes for window and panel are stored the
         // following two statements allow files written here to be read in 2.2 and before
         //panel.setAttribute("height", "" + p.getLayoutHeight());
