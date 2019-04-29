@@ -67,10 +67,10 @@
       <xs:attribute name="name" type="xs:string"/>
       <xs:attribute name="x" type="xs:integer" use="required" />
       <xs:attribute name="y" type="xs:integer" use="required" />
-      <xs:attribute name="windowheight" type="xs:integer" use="required" />
-      <xs:attribute name="windowwidth" type="xs:integer" use="required" />
-      <xs:attribute name="panelheight" type="xs:integer"/>
-      <xs:attribute name="panelwidth" type="xs:integer" />
+      <xs:attribute name="windowheight" type="xs:integer"/>
+      <xs:attribute name="windowwidth" type="xs:integer"/>
+      <xs:attribute name="panelheight" type="xs:integer" use="required" />
+      <xs:attribute name="panelwidth" type="xs:integer" use="required" />
       <xs:attribute name="height" type="xs:integer" >
         <xs:annotation><xs:documentation>Deprecated since JMRI 2.2</xs:documentation></xs:annotation>
       </xs:attribute>
