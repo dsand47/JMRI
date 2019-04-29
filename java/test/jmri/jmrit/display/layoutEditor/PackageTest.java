@@ -24,6 +24,7 @@ import org.junit.runners.Suite;
         LayoutEditorActionTest.class,
         LayoutEditorAuxToolsTest.class,
         LayoutEditorFindItemsTest.class,
+        LayoutEditorLoadAndStoreTest.class,
         LayoutEditorTest.class,
         LayoutEditorWindowTest.class,
         LayoutShapeTest.class,
