@@ -6890,6 +6890,11 @@ final public class LayoutEditor extends PanelEditor implements MouseWheelListene
             }
         }
 
+        // Check if removing the turntable will cause errors.
+        if (!o.isRemoveAllowed()) {
+            return false;
+        }
+
         // remove from selection information
         if (selectedObject == o) {
             selectedObject = null;

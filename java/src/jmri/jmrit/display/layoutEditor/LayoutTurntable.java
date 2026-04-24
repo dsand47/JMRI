@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import jmri.*;
 import jmri.util.MathUtil;
+import jmri.util.swing.JmriJOptionPane;
 
 /**
  * A LayoutTurntable is a representation used by LayoutEditor to display a
@@ -116,6 +117,11 @@ public class LayoutTurntable extends LayoutTrack {
     }
 
     public void setDispatcherManaged(boolean managed) {
+        if (isDispatcherManaged() && !managed) {
+            if (!isRemoveAllowed()) {
+                return;
+            }
+        }
         dispatcherManaged = managed;
     }
 
@@ -1227,6 +1233,158 @@ public class LayoutTurntable extends LayoutTrack {
             }
         }
         return -1;
+    }
+
+    /**
+     * Check for conditions that will caused subsequent errors if the the turntable ray is removed.
+     * - Approach or destination masts have SML.
+     * - Approach or destination masts are on the panel.
+     * @param ray The turntable ray to be deleted.
+     * @return true if the ray can be deleted.
+     */
+    public boolean isRayDeleteAllowed(RayTrack ray) {
+        var smlManager = InstanceManager.getDefault(SignalMastLogicManager.class);
+        var deleteOk = true;
+        var msg = new StringBuilder(Bundle.getMessage("TT_Message_Header"));
+
+        // Ray approach mast
+        var approachMast = ray.getApproachMast();
+        if (approachMast != null && smlManager.isSignalMastUsed(approachMast)) {
+            msg.append(Bundle.getMessage("TTV_Approach_SML", approachMast.getDisplayName()));
+            deleteOk = false;
+        }
+
+        if (approachMast != null && models.containsSignalMast(approachMast)) {
+            msg.append(Bundle.getMessage("TTV_Approach_Mast", approachMast.getDisplayName()));
+            deleteOk = false;
+        }
+
+        // Ray destination mast attached to end bumper or anchor point.
+        var trackSegment = ray.getConnect();
+        if (trackSegment != null) {
+            SignalMast destMast = null;
+
+            if (trackSegment.getType1() == HitPointType.POS_POINT) {
+                destMast = getDestinationMast(trackSegment, trackSegment.getConnect1());
+            } else if (trackSegment.getType2() == HitPointType.POS_POINT) {
+                destMast = getDestinationMast(trackSegment, trackSegment.getConnect2());
+            }
+
+            if (destMast != null && smlManager.isSignalMastUsed(destMast)) {
+                msg.append(Bundle.getMessage("TTV_Approach_SML", destMast.getDisplayName()));
+                deleteOk = false;
+            }
+
+            if (destMast != null && models.containsSignalMast(destMast)) {
+                msg.append(Bundle.getMessage("TTV_Destination_Mast", destMast.getDisplayName()));
+                deleteOk = false;
+            }
+        }
+
+        if (!deleteOk) {
+            msg.append(Bundle.getMessage("TT_Message_Ray_Delete"));
+            JmriJOptionPane.showMessageDialog(null,
+                    msg.toString(),
+                    Bundle.getMessage("WarningTitle"),  // NOI18N
+                    JmriJOptionPane.WARNING_MESSAGE);
+        }
+
+        return deleteOk;
+    }
+
+    /**
+     * Check for conditions that will caused subsequent errors if the the turntable is removed
+     * or dispatcherManaged is changed from true to false.
+     * - The exit mast is a SML source.
+     * - The buffer mast is a SML destination.
+     * - Exit, buffer or approach masts are on the panel.
+     */
+    public boolean isRemoveAllowed() {
+        var smlManager = InstanceManager.getDefault(SignalMastLogicManager.class);
+        var removeOk = true;
+        var msg = new StringBuilder(Bundle.getMessage("TT_Message_Header"));
+
+        // Exit SML
+        var exit = getExitSignalMast();
+        if (exit != null && smlManager.isSignalMastUsed(exit)) {
+            msg.append(Bundle.getMessage("TTV_Exit_SML", exit.getDisplayName()));
+            removeOk = false;
+        }
+
+        // Buffer SML
+        var buffer = getBufferMast();
+        if (buffer != null && smlManager.isSignalMastUsed(buffer)) {
+            msg.append(Bundle.getMessage("TTV_Buffer_SML", buffer.getDisplayName()));
+            removeOk = false;
+        }
+
+        // Exit, buffer or approach signal mast icons
+        if (exit != null && models.containsSignalMast(exit)) {
+            msg.append(Bundle.getMessage("TTV_Exit_Mast", exit.getDisplayName()));
+            removeOk = false;
+        }
+        if (buffer != null && models.containsSignalMast(buffer)) {
+            msg.append(Bundle.getMessage("TTV_Buffer_Mast", buffer.getDisplayName()));
+            removeOk = false;
+        }
+        for (var ray : rayTrackList) {
+            var approachMast = ray.getApproachMast();
+            if (approachMast != null && models.containsSignalMast(approachMast)) {
+                msg.append(Bundle.getMessage("TTV_Approach_Mast", approachMast.getDisplayName()));
+                removeOk = false;
+            }
+        }
+
+        // Destination end bumper and anchor point signal mast icons
+        for (var ray : rayTrackList) {
+            var trackSegment = ray.getConnect();
+            if (trackSegment != null) {
+                SignalMast destMast = null;
+
+                if (trackSegment.getType1() == HitPointType.POS_POINT) {
+                    destMast = getDestinationMast(trackSegment, trackSegment.getConnect1());
+                } else if (trackSegment.getType2() == HitPointType.POS_POINT) {
+                    destMast = getDestinationMast(trackSegment, trackSegment.getConnect2());
+                }
+
+                if (destMast != null && models.containsSignalMast(destMast)) {
+                    msg.append(Bundle.getMessage("TTV_Destination_Mast", destMast.getDisplayName()));
+                    removeOk = false;
+                }
+            }
+        }
+
+        if (!removeOk) {
+            msg.append(Bundle.getMessage("TT_Message_Remove"));
+            msg.append(Bundle.getMessage("TTV_Actions"));
+            msg.append(Bundle.getMessage("TTV_Dispatcher"));
+            JmriJOptionPane.showMessageDialog(null,
+                    msg.toString(),
+                    Bundle.getMessage("WarningTitle"),  // NOI18N
+                    JmriJOptionPane.WARNING_MESSAGE);
+        }
+
+        return removeOk;
+    }
+
+    /**
+     * Check for the presence of destination masts at end bumper and anchor points.
+     * These are the masts used by the Exit mast SML.
+     * @param trackSegment The track segment for a turnout ray.
+     * @param connection The end bumper or anchor point at the end of the track segment.
+     * @return the destination mast at the end bumper or anchor point.  Return null if none assigned.
+     */
+    SignalMast getDestinationMast(TrackSegment trackSegment, LayoutTrack connection) {
+        SignalMast destMast =  null;
+        var point = (PositionablePoint)connection;
+
+        if (LayoutEditorTools.isAtWestEndOfAnchor(models, trackSegment, point)) {
+            destMast = point.getEastBoundSignalMast();
+        } else {
+            destMast = point.getWestBoundSignalMast();
+        }
+
+        return destMast;
     }
 
     /**
