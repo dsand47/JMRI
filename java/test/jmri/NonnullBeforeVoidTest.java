@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 /**
  * Check that there is no @Nonnull annotation before a void declaration.
  * Also checks that "static" comes after and not before public/protected/private.
+ * Also checks that "final" comes after and not before public/protected/private/static.
  *
  * @author Daniel Bergqvist (C) 2026
  */
@@ -96,7 +97,6 @@ public class NonnullBeforeVoidTest {
     @MethodSource("data")
     public void checkFilesTest(File file, boolean pass) throws IOException, JmriException, ParseException {
         checkFile(file);
-//        jmri.jmrix.can.cbus.node.CbusNodeNVManager;
     }
 
     private void checkFile(File file) throws IOException {
