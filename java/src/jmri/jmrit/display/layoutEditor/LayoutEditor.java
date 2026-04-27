@@ -2818,12 +2818,8 @@ final public class LayoutEditor extends PanelEditor implements MouseWheelListene
                 }
             }
             if (lt instanceof LayoutTraverser) {
-                LayoutTraverser tt = (LayoutTraverser) lt;
-                LayoutTraverserView ttv = getLayoutTraverserView(tt);
-                for (LayoutTraverser.SlotTrack st : tt.getSlotList()) {
-                    int slotIndex = st.getConnectionIndex();
-                    ttv.setSlotCoordsIndexed(MathUtil.granulize(ttv.getSlotCoordsIndexed(slotIndex), gContext.getGridSize()), slotIndex);
-                }
+                // Placeholder comment:
+                // Do nothing since slot connection points are relative to the traverser center point.
             }
         }
         for (LayoutShape ls : shapes) {
@@ -5489,10 +5485,9 @@ final public class LayoutEditor extends PanelEditor implements MouseWheelListene
                                 turnView.setRayCoordsIndexed(currentPoint.getX(), currentPoint.getY(),
                                         selectedHitPointType.turntableTrackIndex());
                             } else if (HitPointType.isTraverserSlotHitType(selectedHitPointType)) {
-                                LayoutTraverser turn = (LayoutTraverser) selectedObject;
-                                LayoutTraverserView turnView = getLayoutTraverserView(turn);
-                                turnView.setSlotCoordsIndexed(currentPoint.getX(), currentPoint.getY(),
-                                        selectedHitPointType.traverserTrackIndex());
+                                // Placeholder comment:
+                                // The ability to drag the slot connection points is disabled.
+                                // Connection point locations are relative to the traverser center point.
                             }
                             break;
                         }
