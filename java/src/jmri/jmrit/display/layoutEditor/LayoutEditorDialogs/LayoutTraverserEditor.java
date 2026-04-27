@@ -578,6 +578,7 @@ public class LayoutTraverserEditor extends LayoutTrackEditor {
                     var msg = layoutTraverser.isSlotConnectionClear(slotA);
                     if (msg.length() > 0) {
                         msg.insert(0, Bundle.getMessage("TV_Message_Header"));
+                        msg.append(Bundle.getMessage("TV_Message_Slot_Disable"));
                         JmriJOptionPane.showMessageDialog(editLayoutTraverserFrame,
                                 msg.toString(),
                                 Bundle.getMessage("ErrorTitle"),

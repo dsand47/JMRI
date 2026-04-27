@@ -1152,10 +1152,12 @@ public class LayoutTraverser extends LayoutTrack {
         List<HitPointType> result = new ArrayList<>();
 
         for (int k = 0; k < getNumberSlots(); k++) {
-            if (getSlotConnectOrdered(k) == null) {
+            var slotTrack = slotList.get(k);
+            if (slotTrack != null && slotTrack.getConnect() == null && !slotTrack.isDisabled()) {
                 result.add(HitPointType.traverserTrackIndexedValue(k));
             }
         }
+
         return result;
     }
 
