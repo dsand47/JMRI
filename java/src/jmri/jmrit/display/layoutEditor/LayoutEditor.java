@@ -2817,10 +2817,10 @@ final public class LayoutEditor extends PanelEditor implements MouseWheelListene
                     ttv.setRayCoordsIndexed(MathUtil.granulize(ttv.getRayCoordsIndexed(rayIndex), gContext.getGridSize()), rayIndex);
                 }
             }
-            if (lt instanceof LayoutTraverser) {
-                // Placeholder comment:
-                // Do nothing since slot connection points are relative to the traverser center point.
-            }
+//             if (lt instanceof LayoutTraverser) {
+//                 Placeholder comment:
+//                 Do nothing since slot connection points are relative to the traverser center point.
+//             }
         }
         for (LayoutShape ls : shapes) {
             ls.setCoordsCenter(MathUtil.granulize(ls.getCoordsCenter(), gContext.getGridSize()));
@@ -5484,10 +5484,10 @@ final public class LayoutEditor extends PanelEditor implements MouseWheelListene
                                 LayoutTurntableView turnView = getLayoutTurntableView(turn);
                                 turnView.setRayCoordsIndexed(currentPoint.getX(), currentPoint.getY(),
                                         selectedHitPointType.turntableTrackIndex());
-                            } else if (HitPointType.isTraverserSlotHitType(selectedHitPointType)) {
-                                // Placeholder comment:
-                                // The ability to drag the slot connection points is disabled.
-                                // Connection point locations are relative to the traverser center point.
+//                             } else if (HitPointType.isTraverserSlotHitType(selectedHitPointType)) {
+//                                 Placeholder comment:
+//                                 The ability to drag the slot connection points is disabled.
+//                                 Connection point locations are relative to the traverser center point.
                             }
                             break;
                         }
